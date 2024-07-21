@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"> <!-- Đặt mã hóa ký tự là UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Đặt chế độ xem để trang web hiển thị đúng trên các thiết bị khác nhau -->
+    <title>Quản lý Nhân viên</title> <!-- Tiêu đề của trang -->
+    <link rel="stylesheet" href="./fontawesome-free-6.5.2-web/css/all.css">
+    <link rel="stylesheet" href="./bootstrap-5.3.3-dist/css/bootstrap.min.css"> <!-- Liên kết tới tệp CSS của Bootstrap -->
+    <script src="./bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script> <!-- Liên kết tới tệp JS của Bootstrap -->
+    <style>
+        .button-group {
+            display: flex; /* Sử dụng flexbox để sắp xếp các nút */
+            justify-content: space-between; /* Căn đều khoảng cách giữa các phần tử con */
+            width: 300px; /* Đặt chiều rộng của button group */
+        }
+        .table-container {
+            margin-top: 20px; /* Khoảng cách trên của bảng */
+        }
+        .error-message {
+            color: red; /* Màu chữ đỏ cho thông báo lỗi */
+            display: none; /* Ẩn thông báo lỗi mặc định */
+        }
+        .pagination {
+    float: right; /* Canh phải của thành phần cha */
+    margin: 0 0 5px; /* Không có lề trên, trái và phải; lề dưới là 5px */
+}
+.pagination li a {
+    border: none; /* Không có viền */
+    font-size: 13px; /* Cỡ chữ là 13px */
+    min-width: 30px; /* Chiều rộng tối thiểu là 30px */
+    min-height: 30px; /* Chiều cao tối thiểu là 30px */
+    color: #999; /* Màu chữ là #999 (xám nhạt) */
+    margin: 0 2px; /* Không có lề trên và dưới; lề trái và phải là 2px */
+    line-height: 30px; /* Chiều cao dòng là 30px (căn giữa dọc văn bản) */
+    border-radius: 2px !important; /* Bo góc 2px, quan trọng hơn các thiết lập khác */
+    text-align: center; /* Căn giữa nội dung văn bản theo chiều ngang */
+    padding: 0 6px; /* Không có đệm trên và dưới; đệm trái và phải là 6px */
+}
+.pagination li a:hover {
+    color: #666; /* Màu chữ khi rê chuột là #666 (xám đậm hơn) */
+}   
+.pagination li.active a, .pagination li.active a.page-link {
+    background: #03A9F4; /* Nền màu xanh da trời khi trang hiện tại được chọn */
+}
+.pagination li.active a:hover {        
+    background: #0397d6; /* Nền màu xanh đậm hơn khi rê chuột vào trang hiện tại */
+}
+.pagination li.disabled i {
+    color: #ccc; /* Màu chữ là #ccc (xám nhạt) cho các mục bị vô hiệu hóa */
+}
+.pagination li i {
+    font-size: 16px; /* Cỡ chữ là 16px cho các biểu tượng */
+    padding-top: 6px; /* Đệm trên là 6px để căn chỉnh biểu tượng theo chiều dọc */
+}
+.hint-text {
+    float: left; /* Canh trái của thành phần cha */
+    margin-top: 10px; /* Lề trên là 10px */
+    font-size: 13px; /* Cỡ chữ là 13px */
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-3 text-bg-light"> <!-- Header với padding và màu nền sáng -->
+        <div class="container"> <!-- Sử dụng container để căn giữa và giới hạn chiều rộng -->
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"> <!-- Flexbox để căn chỉnh các phần tử -->
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"> <!-- Logo về trang chủ -->
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                        <use xlink:href="#bootstrap"></use> <!-- Sử dụng SVG làm logo -->
+                    </svg>
+                </a>
+
+                <!-- Menu điều hướng -->
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="#" class="nav-link px-2 text-secondary">TLU</a></li> <!-- Liên kết "TLU" -->
+                    <li><a href="#" class="nav-link px-2 text-dark">Home</a></li> <!-- Liên kết "Home" -->
+                    <li><a href="#" class="nav-link px-2 text-dark">Employee</a></li> <!-- Liên kết "Employee" -->
+                </ul>
+
+                <!-- Form tìm kiếm -->
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control form-control-light text-bg-light" placeholder="Tìm kiếm...." aria-label="Search"> <!-- Ô tìm kiếm -->
+                </form>
+
+                <!-- Nút tìm kiếm -->
+                <div class="text-end">
+                    <button type="button" class="btn btn-warning">Tìm kiếm</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main>
+        <!-- Phần quản lý nhân viên -->
+        <section class="p-3 text-bg-secondary"> <!-- Section với padding và màu nền xám -->
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"> <!-- Flexbox để căn chỉnh các phần tử -->
+                <!-- Menu quản lý nhân viên -->
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li>
+                        <a>Quản lý Nhân viên</a>
+                    </li>
+                </ul>
+
+                <!-- Button group -->
+                <div class="button-group">
+                    <button class="btn btn-danger rounded-pill px-3" type="button" onclick="deleteSelected()"><i class="fa-solid fa-circle-minus"></i>Xóa</button> <!-- Nút xóa -->
+                    <button class="btn btn-success rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i class="fa-solid fa-circle-plus"></i>Thêm Nhân viên mới</button> <!-- Nút thêm nhân viên mới -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Bảng danh sách nhân viên -->
+        <section class="container table-container"> <!-- Container chứa bảng -->
+            <table class="table table-striped"> <!-- Bảng với CSS của Bootstrap -->
+                <thead>
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll"></th> <!-- Cột chọn tất cả -->
+                        <th scope="col">Name</th> <!-- Cột tên nhân viên -->
+                        <th scope="col">Email</th> <!-- Cột email nhân viên -->
+                        <th scope="col">Address</th> <!-- Cột địa chỉ nhân viên -->
+                        <th scope="col">Phone</th> <!-- Cột điện thoại nhân viên -->
+                        <th scope="col">Actions</th> <!-- Cột các hành động -->
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    <!-- Dữ liệu nhân viên sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+            <div class="clearfix">
+                <!-- Thành phần này giúp xóa bỏ hiệu ứng float -->
+                <div class="hint-text">
+                    <!-- Thành phần này hiển thị số lượng bản ghi -->
+                    Hiển thị <b>5</b>/<b>25</b> Bản ghi
+                    <!-- Hiển thị số bản ghi hiện tại / tổng số bản ghi -->
+                </div>
+                <ul class="pagination">
+                    <!-- Bắt đầu danh sách phân trang -->
+                    <li class="page-item disabled">
+                        <!-- Mục phân trang bị vô hiệu hóa -->
+                        <a href="#">Trước</a>
+                        <!-- Liên kết đến trang trước -->
+                    </li>
+                    <li class="page-item">
+                        <!-- Mục phân trang thông thường -->
+                        <a href="#" class="page-link">1</a>
+                        <!-- Liên kết đến trang 1 -->
+                    </li>
+                    <li class="page-item">
+                        <!-- Mục phân trang thông thường -->
+                        <a href="#" class="page-link">2</a>
+                        <!-- Liên kết đến trang 2 -->
+                    </li>
+                    <li class="page-item active">
+                        <!-- Mục phân trang hiện tại được chọn -->
+                        <a href="#" class="page-link">3</a>
+                        <!-- Liên kết đến trang 3 -->
+                    </li>
+                    <li class="page-item">
+                        <!-- Mục phân trang thông thường -->
+                        <a href="#" class="page-link">4</a>
+                        <!-- Liên kết đến trang 4 -->
+                    </li>
+                    <li class="page-item">
+                        <!-- Mục phân trang thông thường -->
+                        <a href="#" class="page-link">5</a>
+                        <!-- Liên kết đến trang 5 -->
+                    </li>
+                    <li class="page-item">
+                        <!-- Mục phân trang thông thường -->
+                        <a href="#" class="page-link">Sau</a>
+                        <!-- Liên kết đến trang sau -->
+                    </li>
+                </ul>
+                <!-- Kết thúc danh sách phân trang -->
+            </div>
+            <!-- Kết thúc thành phần clearfix -->
+            
+        </section>
+    </main>
+
+    <!-- Modal thêm nhân viên mới -->
+    <div class="modal fade" id="addEmployeeModal" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEmployeeModalLabel">Thêm Nhân viên mới</h5> <!-- Tiêu đề modal -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> <!-- Nút đóng modal -->
+                </div>
+                <div class="modal-body">
+                    <form id="employeeForm"> <!-- Form thêm nhân viên -->
+                        <div class="mb-3">
+                            <label for="employeeName" class="form-label">Tên</label> <!-- Nhãn cho ô nhập liệu -->
+                            <input type="text" class="form-control" id="employeeName" required> <!-- Ô nhập liệu tên nhân viên -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeEmail" class="form-label">Email</label> <!-- Nhãn cho ô nhập liệu -->
+                            <input type="email" class="form-control" id="employeeEmail" required> <!-- Ô nhập liệu email nhân viên. <input>: Thẻ HTML dùng để tạo một trường nhập liệu. type="email": Đặt loại trường nhập liệu là email. Trình duyệt sẽ kiểm tra xem đầu vào có đúng định dạng email hay không. class="form-control": Áp dụng lớp CSS form-control của Bootstrap để định dạng trường nhập liệu. id="employeeEmail": Đặt thuộc tính id là employeeEmail, giúp chúng ta dễ dàng truy cập và thao tác với trường nhập liệu này trong JavaScript required: Thuộc tính này yêu cầu người dùng phải điền vào trường nhập liệu trước khi có thể gửi form. Nếu không, form sẽ không được gửi và trình duyệt sẽ hiển thị thông báo lỗi. -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeAddress" class="form-label">Địa chỉ</label> <!-- Nhãn cho ô nhập liệu -->
+                            <textarea class="form-control" id="employeeAddress" rows="3" required></textarea> <!-- Ô nhập liệu địa chỉ nhân viên -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeePhone" class="form-label">Điện thoại</label> <!-- Nhãn cho ô nhập liệu -->
+                            <input type="tel" class="form-control" id="employeePhone" required> <!-- Ô nhập liệu số điện thoại nhân viên -->
+                            <div id="phoneErrorMessage" class="error-message">Số điện thoại phải có độ dài 10 ký tự và bắt đầu bằng số 0.</div> <!-- Thông báo lỗi -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button> <!-- Nút hủy bỏ -->
+                            <button type="submit" class="btn btn-primary">Thêm</button> <!-- Nút thêm nhân viên -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        // Lấy dữ liệu nhân viên từ Local Storage
+        let employees = JSON.parse(localStorage.getItem('employees')) || [];
+
+        // Hiển thị bảng nhân viên
+        function renderEmployeeTable() {
+            const employeeTableBody = document.getElementById('employeeTableBody');
+            employeeTableBody.innerHTML = ''; // Xóa nội dung cũ
+
+            employees.forEach((employee, index) => {
+                const row = document.createElement('tr'); // Tạo một hàng mới
+                row.innerHTML = `
+                    <td><input type="checkbox" class="select-checkbox" data-index="${index}"></td>
+                    <td>${employee.name}</td>
+                    <td>${employee.email}</td>
+                    <td>${employee.address}</td>
+                    <td>${employee.phone}</td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" onclick="editEmployee(${index})"><i class="fa-solid fa-pencil"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteEmployee(${index})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                employeeTableBody.appendChild(row); // Thêm hàng vào bảng
+            });
+        }
+
+        // Thêm nhân viên mới
+        const employeeForm = document.getElementById('employeeForm');
+        employeeForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+            // Lấy giá trị từ các ô nhập liệu
+            const name = document.getElementById('employeeName').value; // Truy cập phần tử HTML có id là 'employeeName' và lấy giá trị hiện tại của phần tử này (giá trị được nhập vào trong ô input), sau đó gán giá trị vào biến 'name'.
+            const email = document.getElementById('employeeEmail').value; // Truy cập phần tử HTML có id là 'employeeEmail' và lấy giá trị hiện tại của phần tử này (giá trị được nhập vào trong ô input), sau đó gán giá trị vào biến 'email'.
+            const address = document.getElementById('employeeAddress').value; // Truy cập phần tử HTML có id là 'employeeAddress' và lấy giá trị hiện tại của phần tử này (giá trị được nhập vào trong ô textarea), sau đó gán giá trị vào biến 'address'.
+            const phone = document.getElementById('employeePhone').value; // Truy cập phần tử HTML có id là 'employeePhone' và lấy giá trị hiện tại của phần tử này (giá trị được nhập vào trong ô input), sau đó gán giá trị vào biến 'phone'.
+
+            // Kiểm tra độ dài và ký tự đầu tiên của số điện thoại
+            if (phone.length === 10 && phone.startsWith('0')) {
+                document.getElementById('phoneErrorMessage').style.display = 'none'; // Ẩn thông báo lỗi nếu hợp lệ
+
+                // Tạo đối tượng nhân viên mới
+                const newEmployee = {
+                    name: name, // Thuộc tính 'name' của đối tượng 'newEmployee' được gán giá trị từ biến 'name'
+                    email: email,
+                    address: address,
+                    phone: phone
+                };
+                employees.push(newEmployee); // Thêm vào mảng employees
+                localStorage.setItem('employees', JSON.stringify(employees)); // Lưu vào Local Storage
+                renderEmployeeTable(); // Hiển thị lại bảng
+                employeeForm.reset(); // Xóa dữ liệu trong form
+                $('#addEmployeeModal').modal('hide'); // Đóng modal
+            } else {
+                // Hiển thị thông báo lỗi nếu số điện thoại không hợp lệ
+                document.getElementById('phoneErrorMessage').style.display = 'block';
+            }
+        });
+
+        // Xóa nhân viên
+        function deleteEmployee(index) {
+            if (confirm('Bạn có chắc muốn xóa nhân viên này không?')) { // Xác nhận xóa
+                employees.splice(index, 1); // Xóa nhân viên khỏi mảng
+                localStorage.setItem('employees', JSON.stringify(employees)); // Cập nhật Local Storage
+                renderEmployeeTable(); // Hiển thị lại bảng
+            }
+        }
+
+        // Sửa nhân viên
+        function editEmployee(index) {
+            const employee = employees[index]; // Lấy nhân viên cần sửa từ mảng
+            document.getElementById('employeeName').value = employee.name; // Đổ dữ liệu vào form sửa
+            document.getElementById('employeeEmail').value = employee.email;
+            document.getElementById('employeeAddress').value = employee.address;
+            document.getElementById('employeePhone').value = employee.phone;
+
+            $('#addEmployeeModal').modal('show'); // Hiển thị modal sửa
+
+            // Xử lý khi submit form sửa
+            employeeForm.onsubmit = function(event) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+                const phone = document.getElementById('employeePhone').value; // Lấy giá trị số điện thoại
+
+                // Kiểm tra độ dài và ký tự đầu tiên của số điện thoại
+                if (phone.length === 10 && phone.startsWith('0')) {
+                    document.getElementById('phoneErrorMessage').style.display = 'none'; // Ẩn thông báo lỗi nếu hợp lệ
+
+                    // Cập nhật thông tin nhân viên
+                    employees[index].name = document.getElementById('employeeName').value;
+                    employees[index].email = document.getElementById('employeeEmail').value;
+                    employees[index].address = document.getElementById('employeeAddress').value;
+                    employees[index].phone = phone;
+
+                    localStorage.setItem('employees', JSON.stringify(employees)); // Lưu vào Local Storage
+                    renderEmployeeTable(); // Hiển thị lại bảng
+                    $('#addEmployeeModal').modal('hide'); // Đóng modal
+                } else {
+                    // Hiển thị thông báo lỗi nếu số điện thoại không hợp lệ
+                    document.getElementById('phoneErrorMessage').style.display = 'block';
+                }
+            };
+        }
+
+        // Chọn tất cả checkbox
+        const selectAllCheckbox = document.getElementById('selectAll');
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.select-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked; // Đánh dấu tất cả checkbox
+            });
+        });
+
+        // Load bảng nhân viên khi trang được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            renderEmployeeTable(); // Hiển thị bảng nhân viên
+        });
+
+        // Xóa những mục đã chọn
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.select-checkbox');
+            let selectedIndexes = [];
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    selectedIndexes.push(index); // Lưu chỉ số của các checkbox đã chọn
+                }
+            });
+
+            // Xác nhận người dùng muốn xóa
+            if (selectedIndexes.length === 0) {
+                alert('Vui lòng chọn ít nhất một nhân viên để xóa.');
+                return;
+            }
+
+            if (confirm('Bạn có chắc muốn xóa các nhân viên đã chọn không?')) {
+                // Xóa từng nhân viên theo chỉ số đã chọn
+                selectedIndexes.sort((a, b) => b - a); // Sắp xếp ngược để xóa không bị thay đổi chỉ số
+                selectedIndexes.forEach(index => {
+                    employees.splice(index, 1);
+                });
+
+                // Lưu lại vào localStorage và render lại bảng
+                localStorage.setItem('employees', JSON.stringify(employees));
+                renderEmployeeTable();
+            }
+        }
+    </script>
+</body>
+</html>
